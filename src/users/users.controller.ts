@@ -25,7 +25,7 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOkResponse({ type: UserEntity })
+  @ApiOkResponse({ type: UserEntity, isArray: true })
   findAll() {
     return this.usersService.findAll()
   }

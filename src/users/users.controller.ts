@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  NotFoundException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { CreateUserDto, UpdateUserDto } from './dto'
@@ -14,8 +17,13 @@ import { UsersService } from './users.service'
 
 @Controller('users')
 @ApiTags('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  private serializeUser(user: UserEntity) {
+    return new UserEntity(user)
+  }
 
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
@@ -31,8 +39,14 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({ type: UserEntity })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id)
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersService.findOne(id)
+
+    if (!user) {
+      throw new NotFoundException(`Could not find user with id ${id}.`)
+    }
+
+    return this.serializeUser(user)
   }
 
   @Patch(':id')

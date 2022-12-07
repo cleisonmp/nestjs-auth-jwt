@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import * as argon from 'argon2'
 import { PrismaService } from '../prisma/prisma.service'
 import type { CreateUserDto, UpdateUserDto } from './dto'
@@ -10,7 +11,23 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const password = await argon.hash(createUserDto.password)
 
-    return this.prisma.user.create({ data: { ...createUserDto, password } })
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          ...createUserDto,
+          password,
+        },
+      })
+      return user
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ForbiddenException('Email is already registered.')
+      }
+      throw error
+    }
   }
 
   findAll() {

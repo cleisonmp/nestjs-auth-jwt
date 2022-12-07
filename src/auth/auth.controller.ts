@@ -1,5 +1,10 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
 import { AuthService } from './auth.service'
@@ -12,6 +17,7 @@ export class AuthController {
 
   @Post()
   @ApiOkResponse()
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   login(@Body() authDto: AuthDto) {
     return this.authService.login(authDto)
   }

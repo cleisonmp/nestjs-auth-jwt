@@ -1,14 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Param } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { CreateUserDto } from '../users/dto/create-user.dto'
+import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
 import { AuthService } from './auth.service'
 import { AuthDto } from './dto'

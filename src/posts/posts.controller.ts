@@ -8,10 +8,9 @@ import {
   Delete,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { PostsService } from './posts.service'
-import { CreatePostDto } from './dto/create-post.dto'
-import { UpdatePostDto } from './dto/update-post.dto'
+import { CreatePostDto, UpdatePostDto } from './dto'
 import { PostEntity } from './entities/post.entity'
+import { PostsService } from './posts.service'
 
 @Controller('posts')
 @ApiTags('posts')

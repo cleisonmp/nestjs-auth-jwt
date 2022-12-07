@@ -8,10 +8,9 @@ import {
   Delete,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { CategoriesService } from './categories.service'
-import { CreateCategoryDto } from './dto/create-category.dto'
-import { UpdateCategoryDto } from './dto/update-category.dto'
+import { CreateCategoryDto, UpdateCategoryDto } from './dto'
 import { CategoryEntity } from './entities/category.entity'
+import { CategoriesService } from './categories.service'
 
 @Controller('categories')
 @ApiTags('categories')

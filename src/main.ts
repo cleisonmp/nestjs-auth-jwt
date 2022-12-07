@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { SwaggerTheme } from 'swagger-themes'
 import { AppModule } from './app.module'
 import { PrismaService } from './prisma/prisma.service'
 
@@ -13,13 +14,19 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
 
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Generic Blog')
     .setDescription('The Generic Blog API description')
     .setVersion('0.1')
     .build()
-  const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
+  const swaggerTheme = new SwaggerTheme('v3')
+  const swaggerOptions = {
+    explorer: true,
+    customCss: swaggerTheme.getBuffer('dark'),
+  }
+
+  SwaggerModule.setup('api', app, swaggerDocument, swaggerOptions)
 
   await app.listen(3333)
 }

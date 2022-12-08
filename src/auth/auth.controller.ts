@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -11,6 +12,7 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiBody,
 } from '@nestjs/swagger'
 
 import { LocalAuthGuard } from './guards/local-auth.guard'
@@ -18,7 +20,12 @@ import { LocalAuthGuard } from './guards/local-auth.guard'
 import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
 import { AuthService } from './auth.service'
+import { AuthUserToken } from './entities/auth.entity'
 import { AuthDto } from './dto'
+
+interface AuthRequest extends Request {
+  user: UserEntity
+}
 
 @Controller('auth')
 @ApiTags('auth')
@@ -28,11 +35,12 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse()
+  @ApiOkResponse({ type: AuthUserToken })
+  @ApiBody({ type: AuthDto })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
-  login(@Body() authDto: AuthDto) {
+  login(@Request() req: AuthRequest) {
     //env.
-    return this.authService.login(authDto)
+    return this.authService.login(req.user)
   }
 
   @Post('signup')

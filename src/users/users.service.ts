@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import * as argon from 'argon2'
+import { UserNotFoundError } from '../errors/user'
 import { PrismaService } from '../prisma/prisma.service'
 import type { CreateUserDto, UpdateUserDto } from './dto'
 
@@ -42,11 +43,36 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } })
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({ where: { id }, data: updateUserDto })
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      return await this.prisma.user.update({
+        where: { id },
+        data: updateUserDto,
+      })
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new UserNotFoundError(id)
+      }
+      throw error
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.user.delete({ where: { id } })
+  async remove(id: string) {
+    try {
+      return await this.prisma.user.delete({
+        where: { id },
+      })
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new UserNotFoundError(id)
+      }
+      throw error
+    }
   }
 }

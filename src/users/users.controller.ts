@@ -8,14 +8,18 @@ import {
   Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
-  NotFoundException,
 } from '@nestjs/common'
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { UserNotFoundError } from '../errors/user'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { UserEntity } from './entities/user.entity'
 import { UsersService } from './users.service'
@@ -23,6 +27,9 @@ import { UsersService } from './users.service'
 @Controller('users')
 @ApiTags('users')
 @ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unauthorized',
+})
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -33,6 +40,10 @@ export class UsersController {
 
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
+  @ApiForbiddenResponse({ description: 'Email is already registered.' })
+  @ApiBadRequestResponse({
+    description: 'Invalid body fields formatting.',
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     return this.serializeUser(await this.usersService.create(createUserDto))
   }
@@ -45,11 +56,14 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({ type: UserEntity })
+  @ApiNotFoundResponse({
+    description: 'Could not find user with id X.',
+  })
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id)
 
     if (!user) {
-      throw new NotFoundException(`Could not find user with id ${id}.`)
+      throw new UserNotFoundError(id)
     }
 
     return this.serializeUser(user)
@@ -57,13 +71,19 @@ export class UsersController {
 
   @Patch(':id')
   @ApiCreatedResponse({ type: UserEntity })
+  @ApiNotFoundResponse({
+    description: 'Could not find user with id X.',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto)
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: UserEntity })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id)
+  @ApiNotFoundResponse({
+    description: 'Could not find user with id X.',
+  })
+  async remove(@Param('id') id: string) {
+    return this.serializeUser(await this.usersService.remove(id))
   }
 }

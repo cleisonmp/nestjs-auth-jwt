@@ -69,6 +69,9 @@ export class AuthController {
   @Get('/me')
   //api docs
   @ApiCreatedResponse({ type: UserPayload })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
   @ApiBearerAuth()
   getMe(@CurrentUser() currentUser: UserPayload) {
     return currentUser

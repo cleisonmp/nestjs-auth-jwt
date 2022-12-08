@@ -17,6 +17,7 @@ import {
 
 import { LocalAuthGuard } from './guards/local-auth.guard'
 
+import { IsPublic } from './decorators/is-public.decorator'
 import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
 import { AuthService } from './auth.service'
@@ -33,6 +34,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @IsPublic()
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: AuthUserToken })

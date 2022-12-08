@@ -1,4 +1,5 @@
 import type { INestApplication } from '@nestjs/common'
+import type { SwaggerCustomOptions } from '@nestjs/swagger'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { SwaggerTheme } from 'swagger-themes'
 import { author, description, repository, version } from '../../../package.json'
@@ -19,9 +20,10 @@ export const startSwagger = (app: INestApplication) => {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
 
   const swaggerTheme = new SwaggerTheme('v3')
-  const swaggerOptions = {
+  const swaggerOptions: SwaggerCustomOptions = {
     explorer: true,
     customCss: swaggerTheme.getBuffer('dark'),
+    swaggerOptions: { defaultModelsExpandDepth: -1 },
   }
 
   SwaggerModule.setup('api', app, swaggerDocument, swaggerOptions)

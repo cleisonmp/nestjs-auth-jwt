@@ -14,6 +14,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
   ApiBody,
+  ApiForbiddenResponse,
+  ApiBadRequestResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 
 import { LocalAuthGuard } from './guards/local-auth.guard'
@@ -36,25 +39,37 @@ interface AuthRequest extends Request {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  //route decorators
   @Post('login')
   @IsPublic()
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: AuthUserToken })
+  //api docs
+  @ApiOkResponse({ type: AuthUserToken, description: 'JWT Signed token' })
   @ApiBody({ type: AuthDto })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user)
   }
 
+  //route decorators
+  @IsPublic()
   @Post('signup')
+  //api docs
   @ApiCreatedResponse({ type: UserEntity })
+  @ApiBadRequestResponse({
+    description: 'Invalid body fields formatting.',
+  })
+  @ApiForbiddenResponse({ description: 'Email is already registered.' })
   signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto)
   }
 
+  //route decorators
   @Get('/me')
+  //api docs
   @ApiCreatedResponse({ type: UserPayload })
+  @ApiBearerAuth()
   getMe(@CurrentUser() currentUser: UserPayload) {
     return currentUser
   }

@@ -1,4 +1,4 @@
-import { ApiProperty, ApiTags } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import type { Category } from '@prisma/client'
 
 export class CategoryEntity implements Category {

@@ -7,13 +7,25 @@ import {
   Param,
   Delete,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
+import { PostNotFoundError } from '../errors/posts'
 import { CreatePostDto, UpdatePostDto } from './dto'
 import { PostEntity } from './entities/post.entity'
 import { PostsService } from './posts.service'
 
 @Controller('posts')
 @ApiTags('posts')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  description: 'Unauthorized',
+})
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
@@ -31,18 +43,33 @@ export class PostsController {
 
   @Get(':id')
   @ApiOkResponse({ type: PostEntity })
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(id)
+  @ApiNotFoundResponse({
+    description: 'Could not find post with id X.',
+  })
+  async findOne(@Param('id') id: string) {
+    const post = await this.postsService.findOne(id)
+
+    if (!post) {
+      throw new PostNotFoundError(id)
+    }
+
+    return post
   }
 
   @Patch(':id')
   @ApiCreatedResponse({ type: PostEntity })
+  @ApiNotFoundResponse({
+    description: 'Could not find post with id X.',
+  })
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(id, updatePostDto)
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: PostEntity })
+  @ApiNotFoundResponse({
+    description: 'Could not find post with id X.',
+  })
   remove(@Param('id') id: string) {
     return this.postsService.remove(id)
   }

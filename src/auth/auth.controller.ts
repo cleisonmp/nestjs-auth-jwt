@@ -1,10 +1,20 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
+import { LocalAuthGuard } from './guards/local-auth.guard'
+
 import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
 import { AuthService } from './auth.service'
@@ -15,10 +25,13 @@ import { AuthDto } from './dto'
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('login')
+  @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @ApiOkResponse()
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   login(@Body() authDto: AuthDto) {
+    //env.
     return this.authService.login(authDto)
   }
 
@@ -26,12 +39,5 @@ export class AuthController {
   @ApiCreatedResponse({ type: UserEntity })
   signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto)
-  }
-
-  @Get(':id')
-  @ApiOkResponse({ type: UserEntity })
-  findOne(@Param('id') id: string) {
-    //return this.authService.findUnique(id)
-    return 'findOne' + id
   }
 }

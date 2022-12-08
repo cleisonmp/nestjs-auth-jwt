@@ -7,6 +7,9 @@ import type { AuthDto } from './dto'
 
 @Injectable()
 export class AuthService {
+  validateUser(authDto: AuthDto) {
+    throw new Error('Method not implemented.')
+  }
   constructor(
     private prisma: PrismaService,
     private readonly user: UsersService,

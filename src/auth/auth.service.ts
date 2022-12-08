@@ -1,42 +1,31 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import * as argon from 'argon2'
-import { PrismaService } from '../prisma/prisma.service'
 import type { CreateUserDto } from '../users/dto'
 import { UsersService } from '../users/users.service'
 import type { AuthDto } from './dto'
 
 @Injectable()
 export class AuthService {
-  validateUser(authDto: AuthDto) {
-    throw new Error('Method not implemented.')
-  }
-  constructor(
-    private prisma: PrismaService,
-    private readonly user: UsersService,
-  ) {}
+  constructor(private readonly user: UsersService) {}
 
-  async login(authDto: AuthDto) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: authDto.email,
-      },
-    })
+  async validateUser(email: string, password: string) {
+    const user = await this.user.findByEmail(email)
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials')
+    if (user) {
+      const isPasswordCorrect = await argon.verify(user.password, password)
+
+      if (isPasswordCorrect) {
+        return user
+      }
     }
 
-    const isPasswordCorrect = await argon.verify(
-      user.password,
-      authDto.password,
-    )
-
-    if (!isPasswordCorrect) {
-      throw new UnauthorizedException('Invalid credentials')
-    }
-
-    return user
+    throw new UnauthorizedException('Invalid credentials')
   }
+
+  async login(user: AuthDto) {
+    return 'Logged in'
+  }
+
   signup(createUserDto: CreateUserDto) {
     return this.user.create(createUserDto)
   }

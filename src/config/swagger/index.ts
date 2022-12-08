@@ -14,6 +14,10 @@ export const startSwagger = (app: INestApplication) => {
     `,
     )
     .setVersion(version)
+    .addTag('auth')
+    .addTag('users', 'Requires Authorization')
+    .addTag('categories', 'Requires Authorization')
+    .addTag('posts', 'Requires Authorization')
     .addBearerAuth()
     .build()
 

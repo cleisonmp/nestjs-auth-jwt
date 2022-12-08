@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -17,11 +18,13 @@ import {
 
 import { LocalAuthGuard } from './guards/local-auth.guard'
 
+import { AuthUserToken, UserPayload } from './entities/auth.entity'
 import { IsPublic } from './decorators/is-public.decorator'
+import { CurrentUser } from './decorators/current-user.decorator'
 import { CreateUserDto } from '../users/dto'
 import { UserEntity } from '../users/entities/user.entity'
+
 import { AuthService } from './auth.service'
-import { AuthUserToken } from './entities/auth.entity'
 import { AuthDto } from './dto'
 
 interface AuthRequest extends Request {
@@ -41,7 +44,6 @@ export class AuthController {
   @ApiBody({ type: AuthDto })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
   login(@Request() req: AuthRequest) {
-    //env.
     return this.authService.login(req.user)
   }
 
@@ -49,5 +51,11 @@ export class AuthController {
   @ApiCreatedResponse({ type: UserEntity })
   signup(@Body() createUserDto: CreateUserDto) {
     return this.authService.signup(createUserDto)
+  }
+
+  @Get('/me')
+  @ApiCreatedResponse({ type: UserPayload })
+  getMe(@CurrentUser() currentUser: UserPayload) {
+    return currentUser
   }
 }

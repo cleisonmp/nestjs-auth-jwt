@@ -5,7 +5,7 @@ export class AuthUserToken {
   access_token: string
 }
 
-export interface UserPayload {
+export class UserPayload {
   sub: string
   email: string
   name: string

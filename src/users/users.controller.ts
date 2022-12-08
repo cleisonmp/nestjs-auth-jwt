@@ -55,13 +55,6 @@ export class UsersController {
     return this.serializeUser(user)
   }
 
-  @Get('/me')
-  @ApiOkResponse({ type: UserEntity })
-  findMe(@Param('id') id: string) {
-    //return this.authService.findUnique(id)
-    return 'findOne' + id
-  }
-
   @Patch(':id')
   @ApiCreatedResponse({ type: UserEntity })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

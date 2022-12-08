@@ -19,18 +19,18 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { UserNotFoundError } from '../errors/user'
+import { UserNotFoundError } from '../errors/users'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { UserEntity } from './entities/user.entity'
 import { UsersService } from './users.service'
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('users')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unauthorized',
 })
-@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

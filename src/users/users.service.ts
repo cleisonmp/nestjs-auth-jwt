@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import * as argon from 'argon2'
-import { UserNotFoundError } from '../errors/user'
+import { UserNotFoundError } from '../errors/users'
 import { PrismaService } from '../prisma/prisma.service'
 import type { CreateUserDto, UpdateUserDto } from './dto'
 

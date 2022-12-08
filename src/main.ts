@@ -20,6 +20,7 @@ async function bootstrap() {
     .setTitle('Generic Blog')
     .setDescription('The Generic Blog API description')
     .setVersion('0.1')
+    .addBearerAuth()
     .build()
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
   const swaggerTheme = new SwaggerTheme('v3')

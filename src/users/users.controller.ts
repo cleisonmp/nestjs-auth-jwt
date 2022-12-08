@@ -10,13 +10,19 @@ import {
   ClassSerializerInterceptor,
   NotFoundException,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { UserEntity } from './entities/user.entity'
 import { UsersService } from './users.service'
 
 @Controller('users')
 @ApiTags('users')
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

@@ -1,8 +1,9 @@
 {
   "name": "nestjs-auth-jwt",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "NestJS setup with JWT authentication.",
+  "repository": "https://github.com/cleisonmp/nestjs-auth-jwt",
+  "author": "https://github.com/cleisonmp/",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

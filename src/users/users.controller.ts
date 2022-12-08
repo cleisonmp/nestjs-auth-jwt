@@ -27,8 +27,8 @@ export class UsersController {
 
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto)
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.serializeUser(await this.usersService.create(createUserDto))
   }
 
   @Get()
@@ -47,6 +47,13 @@ export class UsersController {
     }
 
     return this.serializeUser(user)
+  }
+
+  @Get('/me')
+  @ApiOkResponse({ type: UserEntity })
+  findMe(@Param('id') id: string) {
+    //return this.authService.findUnique(id)
+    return 'findOne' + id
   }
 
   @Patch(':id')

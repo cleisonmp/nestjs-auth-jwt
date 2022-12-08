@@ -4,6 +4,9 @@ import { IsNotEmpty, IsString } from 'class-validator'
 export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Category name',
+    example: 'Technology',
+  })
   name: string
 }

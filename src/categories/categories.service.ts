@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import { PrismaService } from '../prisma/prisma.service'
+import { CategoryNotFoundError } from '../errors/categories'
 import type { CreateCategoryDto, UpdateCategoryDto } from './dto'
 
 @Injectable()
@@ -18,14 +20,34 @@ export class CategoriesService {
     return this.prisma.category.findUnique({ where: { id } })
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return this.prisma.category.update({
-      where: { id },
-      data: updateCategoryDto,
-    })
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    try {
+      return await this.prisma.category.update({
+        where: { id },
+        data: updateCategoryDto,
+      })
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new CategoryNotFoundError(id)
+      }
+      throw error
+    }
   }
 
-  remove(id: string) {
-    return this.prisma.category.delete({ where: { id } })
+  async remove(id: string) {
+    try {
+      return await this.prisma.category.delete({ where: { id } })
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new CategoryNotFoundError(id)
+      }
+      throw error
+    }
   }
 }

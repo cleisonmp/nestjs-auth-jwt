@@ -50,12 +50,15 @@ export class UsersService {
         data: updateUserDto,
       })
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new UserNotFoundError(id)
+      switch (error.code) {
+        case 'P2002':
+          throw new ForbiddenException(
+            `Email ${updateUserDto.email} is already registered to another user.`,
+          )
+        case 'P2025':
+          throw new UserNotFoundError(id)
       }
+
       throw error
     }
   }

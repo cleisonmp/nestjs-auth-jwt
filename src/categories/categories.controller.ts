@@ -10,6 +10,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -31,6 +32,9 @@ export class CategoriesController {
 
   @Post()
   @ApiCreatedResponse({ type: CategoryEntity })
+  @ApiForbiddenResponse({
+    description: 'A category is already registered with name X.',
+  })
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto)
   }
@@ -60,6 +64,9 @@ export class CategoriesController {
   @ApiCreatedResponse({ type: CategoryEntity })
   @ApiNotFoundResponse({
     description: 'Could not find category with id X.',
+  })
+  @ApiForbiddenResponse({
+    description: 'A category is already registered with name X.',
   })
   update(
     @Param('id') id: string,

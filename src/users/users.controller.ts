@@ -74,6 +74,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     description: 'Could not find user with id X.',
   })
+  @ApiForbiddenResponse({ description: 'Email is already registered.' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto)
   }

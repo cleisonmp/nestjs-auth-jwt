@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { User } from '@prisma/client'
 import type { Post, Category } from '@prisma/client'
 import { CategoryEntity } from '../../categories/entities/category.entity'
@@ -28,7 +28,10 @@ export class PostEntity implements Post {
   })
   userId: string
 
-  @ApiProperty({ description: 'Post author', type: UserEntity })
+  @ApiProperty({
+    description: 'Post author',
+    type: OmitType(UserEntity, ['password', 'createdAt', 'updatedAt'] as const),
+  })
   author: User
 
   @ApiProperty({ type: CategoryEntity, isArray: true })

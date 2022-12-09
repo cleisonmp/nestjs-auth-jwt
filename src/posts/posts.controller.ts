@@ -31,6 +31,10 @@ export class PostsController {
 
   @Post()
   @ApiCreatedResponse({ type: PostEntity })
+  @ApiNotFoundResponse({
+    description:
+      'Post could not be created because it depends on one or more records that were required but not found. Either userId or categories are wrong.',
+  })
   create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.create(createPostDto)
   }

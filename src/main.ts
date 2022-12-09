@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core'
 
 import { AppModule } from './app.module'
 import { startSwagger } from './config/swagger'
+import { PrismaClientExceptionFilter } from './exception-filters/prisma-client-exception/prisma-client-exception.filter'
 import { PrismaService } from './prisma/prisma.service'
 
 async function bootstrap() {
@@ -15,6 +16,8 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   )
+
+  app.useGlobalFilters(new PrismaClientExceptionFilter())
 
   startSwagger(app)
 

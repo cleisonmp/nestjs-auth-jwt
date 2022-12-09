@@ -102,8 +102,6 @@ export class PostsService {
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        console.log(JSON.stringify(error, null, 2))
-
         throw new NotFoundException(
           'Post could not be update because it depends on one or more records that were required but not found. Possible causes postId, userId or categories are wrong.',
         )
